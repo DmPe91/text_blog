@@ -1,38 +1,99 @@
 import express from "express";
 import jwebt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 import mongoose from "mongoose";
+import { validationResult } from "express-validator";
+import { registerValidator } from "./validation/auth.js";
+import UserModel from "./models/user.js";
 
 mongoose
   .connect(
-    "mongodb+srv://dmper67:wwwwww@cluster0.k7vaefm.mongodb.net/?retryWrites=true&w=majority"
+    "mongodb+srv://dmper67:wwwwww@cluster0.k7vaefm.mongodb.net/blog?retryWrites=true&w=majority"
   )
   .then(() => console.log("mongo ok"))
   .catch((err) => console.log("erorr mongo", err));
+
 const app = express();
 
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("TEST номер№2 номер№3 НОМЕР2");
+app.post("/auth/login", async (req, res) => {
+  try {
+    const user = await UserModel.findOne({ email: req.body.email });
+    if (!user) {
+      return req.status(404).json({
+        message: "Неверный логин или пароль",
+      });
+    }
+    const isValidPass = await bcrypt.compare(
+      req.body.password,
+      user._doc.passwordHash
+    );
+    if (!isValidPass) {
+      return res.status(404).json({
+        message: "Неверный логин или пароль",
+      });
+    }
+    const token = jwebt.sign(
+      {
+        _id: user._id,
+      },
+      "secret",
+      {
+        expiresIn: "30d",
+      }
+    );
+    const { passwordHash, ...userData } = user._doc;
+    res.json({ ...userData, token });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Авторизация не удалась",
+    });
+  }
 });
 
-app.post("/auth/login", (req, res) => {
-  console.log(req.body);
-  const token = jwebt.sign(
-    {
-      email: req.body.email,
-      fullname: "Отто Штрассер",
-    },
-    "enigma"
-  );
-  res.json({
-    success: true,
-    token,
-  });
-}),
-  app.listen(1488, (err) => {
-    if (err) {
-      return console.log(err);
+app.post("/auth/register", registerValidator, async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json(errors.array());
     }
-    console.log("ok");
-  });
+
+    const password = req.body.password;
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(password, salt);
+
+    const doc = new UserModel({
+      email: req.body.email,
+      fullName: req.body.fullName,
+      avatarUrl: req.body.avatarUrl,
+      passwordHash: hash,
+    });
+
+    const user = await doc.save();
+    const token = jwebt.sign(
+      {
+        _id: user._id,
+      },
+      "secret",
+      {
+        expiresIn: "30d",
+      }
+    );
+    const { passwordHash, ...userData } = user._doc;
+    res.json({ ...userData, token });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Регистрация не удалась",
+    });
+  }
+});
+
+app.listen(1488, (err) => {
+  if (err) {
+    return console.log(err);
+  }
+  console.log("ok");
+});
