@@ -61,7 +61,8 @@ app.post(
   PostControllers.create
 );
 app.get("/tags", PostControllers.getLastTags);
-app.get("/posts", PostControllers.getAll);
+app.get("/posts/search", PostControllers.getAll);
+
 app.get("posts/tags", PostControllers.getLastTags);
 app.get("/posts/:id", PostControllers.getOne);
 app.delete("/posts/:id", checkAuth, PostControllers.remove);

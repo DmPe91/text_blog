@@ -2,12 +2,15 @@ import PostModel from "../models/post.js";
 
 export const getLastTags = async (req, res) => {
   try {
-    const posts = await PostModel.find().limit(5).exec();
+    const posts = await PostModel.find()
+      .sort({ createdAt: -1 })
+      .limit(7)
+      .exec();
 
     const tags = posts
       .map((obj) => obj.tags)
       .flat()
-      .slice(0, 5);
+      .slice(0, 7);
     res.json(tags);
   } catch (err) {
     console.log(err);
@@ -19,7 +22,28 @@ export const getLastTags = async (req, res) => {
 
 export const getAll = async (req, res) => {
   try {
-    const posts = await PostModel.find().populate("user").exec();
+    const posts = await PostModel.find()
+      .sort(
+        req.query.keyword === "date" ? { createdAt: -1 } : { viewsCount: -1 }
+      )
+      .populate("user")
+      .exec();
+
+    res.json(posts);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Не удалось получить статьи",
+    });
+  }
+};
+export const getSort = async (req, res) => {
+  try {
+    const posts = await PostModel.find()
+      .sort({ viewsCount: -1 })
+      .populate("user")
+      .exec();
+
     res.json(posts);
   } catch (err) {
     console.log(err);
@@ -117,7 +141,7 @@ export const update = async (req, res) => {
         text: req.body.text,
         imageUrl: req.body.imageUrl,
         user: req.body.user,
-        tags: req.body.tags,
+        tags: req.body.tags.split(","),
       }
     );
     res.json({
