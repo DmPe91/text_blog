@@ -10,6 +10,7 @@ export const getLastTags = async (req, res) => {
     const tags = posts
       .map((obj) => obj.tags)
       .flat()
+      .filter((item, pos, arr) => !pos || item !== arr[pos - 1])
       .slice(0, 7);
     res.json(tags);
   } catch (err) {
@@ -37,13 +38,10 @@ export const getAll = async (req, res) => {
     });
   }
 };
-export const getSort = async (req, res) => {
+export const getSearchTag = async (req, res) => {
   try {
-    const posts = await PostModel.find()
-      .sort({ viewsCount: -1 })
-      .populate("user")
-      .exec();
-
+    const name = req.params.id;
+    const posts = await PostModel.find({ tags: name }).populate("user");
     res.json(posts);
   } catch (err) {
     console.log(err);
@@ -52,7 +50,6 @@ export const getSort = async (req, res) => {
     });
   }
 };
-
 export const getOne = async (req, res) => {
   try {
     const postId = req.params.id;

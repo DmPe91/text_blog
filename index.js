@@ -6,7 +6,11 @@ import mongoose from "mongoose";
 import { registerValidator, loginValidation } from "./validation/auth.js";
 import { postValidation } from "./validation/postCreate.js";
 
-import { UserControlers, PostControllers } from "./controlers/index.js";
+import {
+  UserControlers,
+  PostControllers,
+  CommentControllers,
+} from "./controlers/index.js";
 import { handleValidationsErrors, checkAuth } from "./utils/index.js";
 
 mongoose
@@ -60,9 +64,12 @@ app.post(
   handleValidationsErrors,
   PostControllers.create
 );
+app.post("/posts/comment/add", checkAuth, CommentControllers.addComment);
 app.get("/tags", PostControllers.getLastTags);
 app.get("/posts/search", PostControllers.getAll);
-
+app.get("/comments", CommentControllers.getLastСomments);
+app.get("posts/comments", CommentControllers.getPostComments);
+app.get("/tags/:id", PostControllers.getSearchTag);
 app.get("posts/tags", PostControllers.getLastTags);
 app.get("/posts/:id", PostControllers.getOne);
 app.delete("/posts/:id", checkAuth, PostControllers.remove);
