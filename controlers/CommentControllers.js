@@ -5,6 +5,8 @@ export const addComment = async (req, res) => {
       text: req.body.text,
       post: req.body.post,
       user: req.body.user,
+      fullName: req.body.fullName,
+      avatarUrl: req.body.avatarUrl,
     });
     const comment = await doc.save();
     res.json(comment);
@@ -17,8 +19,8 @@ export const addComment = async (req, res) => {
 };
 export const getPostComments = async (req, res) => {
   try {
-    const post = req.params.id;
-    const comments = await CommentModel.find({ post: post });
+    const posts = req.params.id;
+    const comments = await CommentModel.find({ post: posts }).populate("user");
     res.json(comments);
   } catch (err) {
     console.log(err);

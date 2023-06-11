@@ -68,7 +68,7 @@ app.post("/posts/comment/add", checkAuth, CommentControllers.addComment);
 app.get("/tags", PostControllers.getLastTags);
 app.get("/posts/search", PostControllers.getAll);
 app.get("/comments", CommentControllers.getLastСomments);
-app.get("posts/comments", CommentControllers.getPostComments);
+app.get("/comments/:id", CommentControllers.getPostComments);
 app.get("/tags/:id", PostControllers.getSearchTag);
 app.get("posts/tags", PostControllers.getLastTags);
 app.get("/posts/:id", PostControllers.getOne);

@@ -7,15 +7,20 @@ const CommentSchema = new mongoose.Schema(
       required: true,
     },
     post: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Post",
+      type: String,
+
       required: true,
     },
     user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      type: String,
+
       required: true,
     },
+    fullName: {
+      type: String,
+      required: true,
+    },
+    avatarUrl: String,
   },
   {
     timestamps: true,
