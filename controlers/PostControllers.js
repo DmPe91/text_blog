@@ -7,12 +7,13 @@ export const getLastTags = async (req, res) => {
       .limit(7)
       .exec();
 
-    const tags = posts
-      .map((obj) => obj.tags)
-      .flat()
-      .filter((item, pos, arr) => !pos || item !== arr[pos - 1])
-      .slice(0, 7);
-    res.json(tags);
+    const tags = posts.map((obj) => obj.tags).flat();
+    const uniq = tags.filter(function (item, pos) {
+      return tags.indexOf(item) == pos;
+    });
+    //.slice(0, 8);
+
+    res.json(uniq);
   } catch (err) {
     console.log(err);
     res.status(500).json({
@@ -145,6 +146,27 @@ export const update = async (req, res) => {
       success: true,
     });
   } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Не удалось обновить статью",
+    });
+  }
+};
+export const updateComment = async (req, res) => {
+  try {
+    const postId = req.params.id;
+    await PostModel.updateOne(
+      {
+        _id: postId,
+      },
+      {
+        $inc: { commentsCount: 1 },
+      }
+    );
+    res.json({
+      success: true,
+    });
+  } catch (error) {
     console.log(err);
     res.status(500).json({
       message: "Не удалось обновить статью",

@@ -51,7 +51,7 @@ app.post(
 );
 app.get("/auth/me", checkAuth, UserControlers.auth);
 
-app.post("/upload", checkAuth, upload.single("image"), (req, res) => {
+app.post("/upload", upload.single("image"), (req, res) => {
   res.json({
     url: `/uploads/${req.file.originalname}`,
   });
@@ -80,6 +80,7 @@ app.patch(
   handleValidationsErrors,
   PostControllers.update
 );
+app.patch("/comments/:id", PostControllers.updateComment);
 
 app.listen(1488, (err) => {
   if (err) {

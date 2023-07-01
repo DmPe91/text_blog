@@ -1,4 +1,5 @@
 import CommentModel from "../models/comment.js";
+
 export const addComment = async (req, res) => {
   try {
     const doc = new CommentModel({
