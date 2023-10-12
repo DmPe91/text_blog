@@ -82,7 +82,7 @@ app.patch(
 );
 app.patch("/comments/:id", PostControllers.updateComment);
 
-app.listen(1488, (err) => {
+app.listen(1487, (err) => {
   if (err) {
     return console.log(err);
   }
