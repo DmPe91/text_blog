@@ -82,9 +82,11 @@ app.patch(
 );
 app.patch("/comments/:id", PostControllers.updateComment);
 
-app.listen(1487, (err) => {
+const port = process.env.PORT || 1487;
+
+app.listen(port, (err) => {
   if (err) {
     return console.log(err);
   }
-  console.log("ok");
+  console.log(`Server start on ${port}`);
 });
