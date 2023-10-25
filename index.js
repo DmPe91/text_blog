@@ -2,6 +2,8 @@ import express from "express";
 import multer from "multer";
 import cors from "cors";
 import mongoose from "mongoose";
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
 
 import { registerValidator, loginValidation } from "./validation/auth.js";
 import { postValidation } from "./validation/postCreate.js";
@@ -12,6 +14,19 @@ import {
   CommentControllers,
 } from "./controlers/index.js";
 import { handleValidationsErrors, checkAuth } from "./utils/index.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCnNnyT9p_Dn_8eiHsx48C4mCHE7mI81NI",
+  authDomain: "text-blog-backend.firebaseapp.com",
+  projectId: "text-blog-backend",
+  storageBucket: "text-blog-backend.appspot.com",
+  messagingSenderId: "38364562663",
+  appId: "1:38364562663:web:615f96b64fea226aaace42",
+  measurementId: "G-BKHB22BJ50",
+};
+
+const app_firebase = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app_firebase);
 
 mongoose
   .connect(process.env.MONGODB_URI)
