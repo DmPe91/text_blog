@@ -28,6 +28,10 @@ npm install
 ```bash
 npm run dev
 ```
+**🚀 Live Frontend:** [text-blog-frontend.vercel.app](https://text-blog-frontend.vercel.app)  
+
+> ⚠️ **Важно:** Backend на бесплатном тарифе Render.com "засыпает" после 15 минут неактивности. Первая загрузка может занять 30-60 секунд, иногда приходиться перезгружать страницу несколько раз.
+
 
 ## Связанный репозиторий
 
